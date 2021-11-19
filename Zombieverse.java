@@ -1,4 +1,6 @@
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * This lab assignment mainly target at your mastery of matrix, array, and BFS(or DFS).
@@ -68,9 +70,56 @@ public class Zombieverse {
      *          else return the days it took for all human to be infected
      */
     public int infection(int[][] grid) {
-        //TODO complete this function
-        throw new UnsupportedOperationException("Not yet implemented");
+        int row = grid.length;
+        int col = grid[0].length;
+        Queue<int[]> queue = new LinkedList<>();
+
+        // 4 directional adjacent will be infected
+        int[][] adj = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        int human = 0;
+
+        // zombie in queue
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 1) {
+                    human++;
+                }
+                if (grid[i][j] == 2) {
+                    queue.offer(new int[]{i, j});
+                }
+            }
+        }
+        int day = 0;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            int nHuman = human;
+            while (size-- > 0) {
+                int[] current = queue.poll();
+                int x = current[0];
+                int y = current[1];
+                for (int[] adjs : adj) {
+                    int X = x + adjs[0];
+                    int Y = y + adjs[1];
+                    // if coordinates dont pass the boundaires, then turn zombie
+                    if (X >= 0 && X < row && Y >= 0 && Y < col) {
+                        if (grid[X][Y] == 1) {
+                            // zombie
+                            grid[X][Y] = 2;
+                            // add to queue
+                            queue.offer(new int[]{X, Y});
+                            human--;
+                        }
+                    }
+                }
+            }
+            if (nHuman != human) {
+                day++;
+            }
+        }
+        return human == 0 ? day : -1;
     }
+
+
 
     public static void main(String[] args) {
         Zombieverse zombieverse = new Zombieverse();
@@ -86,16 +135,6 @@ public class Zombieverse {
         Result of days: 8
         Result of days: 16*/
     }
+
 }
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
+
